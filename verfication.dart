@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project/colors.dart';
 
 class VerificationCode extends StatefulWidget {
   const VerificationCode({super.key});
@@ -26,6 +27,12 @@ class _VerificationCodeState extends State<VerificationCode> {
   void initState() {
     super.initState();
     _startTimer();
+
+    for (var node in _focusNodes) {
+      node.addListener(() {
+        setState(() {});
+      });
+    }
   }
 
   void _startTimer() {
@@ -104,8 +111,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                       ),
                       children: [
                         TextSpan(
-                          text:
-                              "We have sent the verification code to your Email:\n",
+                          text: "We have sent the verification code to your Email:\n",
                         ),
                         TextSpan(
                           text: "mo***@gmail.com",
@@ -118,71 +124,103 @@ class _VerificationCodeState extends State<VerificationCode> {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 24),
 
                   // ===== 4 OTP BOXES =====
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(4, (index) {
+                      final hasFocus = _focusNodes[index].hasFocus;
+                      final isNotEmpty = _controllers[index].text.isNotEmpty;
+
+                      final currentBorderSide = hasFocus
+                          ? const BorderSide(color: AppColors.tealGray, width: 1.5)
+                          : isNotEmpty
+                              ? const BorderSide(color: Colors.black, width: 1.5)
+                              : BorderSide.none;
+
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: TextField(
-                            controller: _controllers[index],
-                            focusNode: _focusNodes[index],
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            maxLength: 1,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Inter",
-                            ),
-                            decoration: InputDecoration(
-                              counterText: '',
-                              filled: true,
-                              fillColor: _controllers[index].text.isNotEmpty
-                                  ? Colors.white
-                                  : const Color(0xFFF2F2F2),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF0BA3AC),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                            onChanged: (value) {
-                              setState(() {}); // مهم لتحديث اللون والزرار
-
-                              if (value.isNotEmpty && index < 3) {
-                                FocusScope.of(context)
-                                    .requestFocus(_focusNodes[index + 1]);
-                              } else if (value.isEmpty && index > 0) {
-                                FocusScope.of(context)
-                                    .requestFocus(_focusNodes[index - 1]);
+                          width: 56,
+                          height: 56,
+                          // استخدام KeyboardListener للتحكم في زر الـ Backspace حتى لو المربع فاضي
+                          child: KeyboardListener(
+                            focusNode: FocusNode(), // نود وهمية للمستمع فقط
+                            onKeyEvent: (event) {
+                              if (event is KeyDownEvent && 
+                                  event.logicalKey == LogicalKeyboardKey.backspace) {
+                                // لو المربع الحالي فاضي والمسخدم ضغط امسح، نرجعه للمربع السابق ويمسحه
+                                if (_controllers[index].text.isEmpty && index > 0) {
+                                  _controllers[index - 1].clear();
+                                  FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+                                  setState(() {});
+                                }
                               }
                             },
+                            child: TextField(
+                              controller: _controllers[index],
+                              focusNode: _focusNodes[index],
+                              cursorColor: AppColors.tealGray,
+                              cursorWidth: 1,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              maxLength: 1,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Inter",
+                              ),
+                              decoration: InputDecoration(
+                                counterText: '',
+                                filled: true,
+                                fillColor: hasFocus
+                                    ? const Color.fromARGB(128, 234, 248, 249)
+                                    : isNotEmpty
+                                        ? Colors.white
+                                        : const Color(0xFFF2F2F2),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: currentBorderSide,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: currentBorderSide,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: currentBorderSide,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                setState(() {});
+
+                                if (value.isNotEmpty) {
+                                  if (index < 3) {
+                                    // الانتقال للمربع التالي
+                                    FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+                                  } else {
+                                    // لو وصلنا للمربع الأخير (index == 3) واتكتب فيه، يشيل الفوكس خالص ويقفل الكيبورد
+                                    _focusNodes[index].unfocus();
+                                  }
+                                } else {
+                                  // لو المستخدم مسح الرقم اللي جوه المربع الحالي يرجعه خطوة لورا
+                                  if (index > 0) {
+                                    FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+                                  }
+                                }
+                              },
+                            ),
                           ),
                         ),
                       );
                     }),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
 
                   // ===== TIMER =====
                   Text(
@@ -195,7 +233,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 28),
 
                   // ===== DIDN'T RECEIVE CODE? SEND AGAIN =====
                   Row(
@@ -206,7 +244,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                         style: TextStyle(
                           fontSize: 14,
                           fontFamily: "Inter",
-                          color: Colors.grey,
+                          color: Colors.black,
                         ),
                       ),
                       GestureDetector(
@@ -216,9 +254,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                                 for (var c in _controllers) {
                                   c.clear();
                                 }
-                                FocusScope.of(
-                                  context,
-                                ).requestFocus(_focusNodes[0]);
+                                FocusScope.of(context).requestFocus(_focusNodes[0]);
                               }
                             : null,
                         child: Text(
@@ -228,16 +264,16 @@ class _VerificationCodeState extends State<VerificationCode> {
                             fontWeight: FontWeight.w700,
                             fontFamily: "Inter",
                             color: _canResend
-                                ? const Color(0xFF0BA3AC)
+                                ? AppColors.tealGray
                                 : Colors.grey.shade400,
-                            decorationColor: const Color(0xFF0BA3AC),
+                            decorationColor: AppColors.tealGray,
                           ),
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 28),
 
                   // ===== CONTINUE BUTTON =====
                   SizedBox(
@@ -245,7 +281,6 @@ class _VerificationCodeState extends State<VerificationCode> {
                     height: 52,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        // ===== لو الكود مكتمل → تيل، لو لأ → رصاصي =====
                         backgroundColor: _isCodeComplete
                             ? const Color(0xFF0BA3AC)
                             : Colors.grey.shade300,
@@ -254,12 +289,10 @@ class _VerificationCodeState extends State<VerificationCode> {
                         ),
                         elevation: 0,
                       ),
-                      // ===== لو الكود مكتمل → اشتغل، لو لأ → null يعني disabled =====
                       onPressed: _isCodeComplete
                           ? () {
-                              final code =
-                                  _controllers.map((c) => c.text).join();
-                              // TODO: اعمل هنا الـ verification logic
+                              final code = _controllers.map((c) => c.text).join();
+                              debugPrint('Verification code entered: $code');
                             }
                           : null,
                       child: Text(
@@ -268,7 +301,6 @@ class _VerificationCodeState extends State<VerificationCode> {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           fontFamily: "Inter",
-                          // ===== لون النص كمان يتغير =====
                           color: _isCodeComplete
                               ? Colors.white
                               : Colors.grey.shade500,

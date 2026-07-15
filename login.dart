@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/signup.dart';
+import 'package:project/verfication.dart';
 import 'package:project/colors.dart';
 import 'package:project/buildbuttonmenu.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +16,28 @@ class _LoginState extends State<Login> {
   bool isHidden = true;
   bool showForgotPassword = false;
   String selectedMethod = "Email";
+  final FocusNode emailFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+
+ @override
+void initState() {
+  super.initState();
+
+  emailFocusNode.addListener(() {
+    setState(() {});
+  });
+
+  passwordFocusNode.addListener(() {
+    setState(() {});
+  });
+}
+
+@override
+void dispose() {
+  emailFocusNode.dispose();
+  passwordFocusNode.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +58,26 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      const SizedBox(height: 100),
+                      const SizedBox(height: 234),
 
                       // ===== TITLE =====
-                      const Text(
+                       Text(
                         "Welcome Back!",
                         style: TextStyle(
                           fontSize: 24,
-                          fontFamily: "Kreon",
+                          fontFamily: "kreon",
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      SizedBox(height: 12,),
 
-                      const Text(
+                       Text(
                         "Log in to your Account",
                         style: TextStyle(
                           fontSize: 18,
                           fontFamily: "Inter",
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey,
+                          color: Color(0xFFCCCCCC),
                         ),
                       ),
 
@@ -64,46 +88,62 @@ class _LoginState extends State<Login> {
                         width: fieldWidth,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
+                          children:  [
                             Padding(
-                              padding: EdgeInsets.only(left: 5),
-                              child: Icon(Icons.email_outlined,
-                                  color: Color.fromARGB(255, 0, 0, 0)),
+                              padding: EdgeInsets.only(left: 16),
+                              child: SvgPicture.asset(
+                                'icons/email.svg',
+                                
+                              ),
                             ),
                             SizedBox(width: 8),
-                            Text("Email", style: TextStyle(fontSize: 16)),
+                            Text("Email", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
 
-                      // ===== EMAIL FIELD =====
-                      SizedBox(
-                        width: fieldWidth,
-                        child: TextField(
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            hintText: 'Enter email address',
-                            hintStyle: const TextStyle(color: Color(0xFFACACAC)),
-                            filled: true,
-                            fillColor: const Color(0xFFF5F5F5),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: AppColors.tealGray,
-                                width: 1.5,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: SizedBox(
+                          width: fieldWidth,
+                          height: 48,
+                          child: TextField(
+                            focusNode: emailFocusNode,
+                            cursorColor: AppColors.tealGray,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              hintText: 'Enter email address',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFFCCCCCC),
+                                fontSize: 14,
+                              ),
+                          
+                              filled: true,
+                          
+                              fillColor: emailFocusNode.hasFocus
+                                  ? const Color.fromARGB(128, 234, 248, 249) // اللون أثناء الكتابة
+                                  : const Color(0xFFF5F5F5), // اللون العادي
+                          
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
+                          
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: const BorderSide(
+                                  color: AppColors.tealGray,
+                                  width: 1.5,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
 
                       // ===== PASSWORD LABEL =====
                       SizedBox(
@@ -112,218 +152,253 @@ class _LoginState extends State<Login> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                              Padding(
-                              padding: EdgeInsets.only(left: 5),
+                              padding: EdgeInsets.only(left: 16),
                               child: SvgPicture.asset(
                                 'icons/qlementine-icons_password-16.svg',
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Text("Password", style: TextStyle(fontSize: 16)),
+                            const Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
 
-                      SizedBox(
-                        width: fieldWidth,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextField(
-                              obscureText: isHidden,
-                              onChanged: (value) {
-                                setState(() {
-                                  showForgotPassword = value.isNotEmpty;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'Enter your password',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF0BA3AC),
-                                    width: 1.5,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: SizedBox(
+                          width: fieldWidth,
+                          height: showForgotPassword ? 90 : 48,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextField(
+                                focusNode: passwordFocusNode,
+                                cursorColor: AppColors.tealGray,
+                                obscureText: isHidden,
+                                onChanged: (value) {
+                                  setState(() {
+                                    showForgotPassword = value.isNotEmpty;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Enter your password',
+                                  hintStyle: const TextStyle(color: Color(0xFFCCCCCC), fontSize: 14),
+                                  filled: true,
+                                  fillColor: passwordFocusNode.hasFocus
+                                      ? const Color.fromARGB(128, 234, 248, 249) // اللون أثناء الكتابة زي الإيميل
+                                      : const Color(0xFFF5F5F5), // اللون العادي
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
                                   ),
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isHidden = !isHidden;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    isHidden
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                    color: Colors.black,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
                                   ),
-                                ),
-                              ),
-                            ),
-
-                            // ===== FORGOT PASSWORD BUTTON =====
-                            if (showForgotPassword)
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return StatefulBuilder(
-                                          builder: (context, setModalState) {
-                                            return LayoutBuilder(
-                                              builder: (context, sheetConstraints) {
-                                                final double sheetFieldWidth =
-                                                    sheetConstraints.maxWidth * 0.9 > 320
-                                                        ? 320
-                                                        : sheetConstraints.maxWidth * 0.9;
-                                                return SizedBox(
-                                                  width: double.infinity,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(
-                                                        top: 20, left: 20, right: 20),
-                                                    child: SingleChildScrollView(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment.start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                "Verify Your Identity",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                              const Spacer(),
-                                                              IconButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                icon: const Icon(Icons.close),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          const Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.info_outline,
-                                                                color: Color(0xFF8B8484),
-                                                                size: 14,
-                                                              ),
-                                                              SizedBox(width: 5),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "For your security, verification is required on new devices.",
-                                                                  style: TextStyle(
-                                                                    fontSize: 10,
-                                                                    fontWeight: FontWeight.w100,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 20),
-                                                          const Text(
-                                                            "Choose how to receive your code",
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.w500,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          Row(
-                                                            children: [
-                                                              MethodButton(
-                                                                title: "Email",
-                                                                isSelected:
-                                                                    selectedMethod == "Email",
-                                                                onTap: () {
-                                                                  setModalState(() {
-                                                                    selectedMethod = "Email";
-                                                                  });
-                                                                },
-                                                              ),
-                                                              const SizedBox(width: 12),
-                                                              MethodButton(
-                                                                title: "WhatsApp",
-                                                                isSelected:
-                                                                    selectedMethod == "WhatsApp",
-                                                                onTap: () {
-                                                                  setModalState(() {
-                                                                    selectedMethod = "WhatsApp";
-                                                                  });
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 10),
-                                                          SizedBox(
-                                                            width: sheetFieldWidth,
-                                                            height: 52,
-                                                            child: ElevatedButton(
-                                                              style: ElevatedButton.styleFrom(
-                                                                backgroundColor:
-                                                                    AppColors.tealGray,
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(30),
-                                                                ),
-                                                                elevation: 0,
-                                                              ),
-                                                              onPressed: () {},
-                                                              child: const Text(
-                                                                "Send OTP",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w600,
-                                                                  fontFamily: "Inter",
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(height: 20),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Forgot Password?",
-                                    style: TextStyle(
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: const BorderSide(
                                       color: Color(0xFF0BA3AC),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isHidden = !isHidden;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      isHidden
+                                          ? Icons.visibility_off
+                                          : Icons.visibility_outlined,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),
                               ),
-                          ],
+
+                              
+                        
+                              // ===== FORGOT PASSWORD BUTTON =====
+                              if (showForgotPassword)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return StatefulBuilder(
+                                            builder: (context, setModalState) {
+                                              return LayoutBuilder(
+                                                builder: (context, sheetConstraints) {
+                                                  final double sheetFieldWidth =
+                                                      constraints.maxWidth * 0.9 > 320 ? 320 : constraints.maxWidth * 0.9;
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(30),
+                                                      color: Colors.white,
+
+                                                    ),
+                                                    child: SizedBox(
+                                                      
+                                                      width: double.infinity,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(
+                                                            top: 20, left: 20, right: 20),
+                                                        child: SingleChildScrollView(
+                                                          
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                   Padding(
+                                                                     padding: const EdgeInsets.only(left: 16),
+                                                                     child: Text(
+                                                                      "Verify Your Identity",
+                                                                      style: TextStyle(
+                                                                        fontSize: 16,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        
+                                                                      ),
+                                                                    ),
+                                                                   ),
+                                                                  const Spacer(),
+                                                                  IconButton(
+                                                                    onPressed: () {
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    icon: const Icon(Icons.close),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(height: 9),
+                                                               Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(left: 16),
+                                                                    child: SvgPicture.asset('icons/exclamation (16) 1.svg',color: AppColors.gray,),
+                                                                  ),
+                                                                  SizedBox(width: 1.5),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      "For your security, verification is required on new devices.",
+                                                                      style: TextStyle(
+                                                                        fontSize: 10,
+                                                                        fontWeight: FontWeight.w100,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(height: 24),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(left: 16),
+                                                                child: const Text(
+                                                                  "Choose how to receive your code",
+                                                                  style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(height: 24),
+                                                              Row(
+                                                                children: [
+                                                                  MethodButton(
+                                                                    title: "Email",
+                                                                    isSelected:
+                                                                        selectedMethod == "Email",
+                                                                    onTap: () {
+                                                                      setModalState(() {
+                                                                        selectedMethod = "Email";
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                  const SizedBox(width: 12),
+                                                                  MethodButton(
+                                                                    title: "WhatsApp",
+                                                                    isSelected:
+                                                                        selectedMethod == "WhatsApp",
+                                                                    onTap: () {
+                                                                      setModalState(() {
+                                                                        selectedMethod = "WhatsApp";
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(height: 24),
+                                                              Center(
+                                                                child: SizedBox(
+                                                                  width: sheetFieldWidth,
+                                                                  height: 44,
+                                                                  child: ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                          AppColors.tealGray,
+                                                                      shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(30),
+                                                                      ),
+                                                                      elevation: 0,
+                                                                    ),
+                                                                    onPressed: () {
+                                                                      Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder: (context) => const VerificationCode(),
+                                                                      ),);
+                                                                                
+                                                                    },
+                                                                    child:  Text(
+                                                                      "Send OTP",
+                                                                      style: TextStyle(
+                                                                        fontSize: 16,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        fontFamily: "Inter",
+                                                                        color: Colors.white,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(height: 20),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(
+                                        color: Color(0xFF0BA3AC),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
+
+                      
+                      SizedBox(height: 32,),
 
                       // ===== OR DIVIDER =====
                       SizedBox(
@@ -349,15 +424,16 @@ class _LoginState extends State<Login> {
                         ),
                       ),
 
-                      const SizedBox(height: 35),
+                      const SizedBox(height: 32),
 
                       // ===== LOGIN WITH GOOGLE =====
                       SizedBox(
+                        height: 48,
                         width: fieldWidth,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            elevation: 1,
+                            elevation: 0.5,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                               side: const BorderSide(width: 1.5, color: Color(0xFFF5F5F5)),
@@ -378,15 +454,16 @@ class _LoginState extends State<Login> {
                         ),
                       ),
 
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 16),
 
                       // ===== LOGIN WITH APPLE =====
                       SizedBox(
                         width: fieldWidth,
+                        height: 48,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            elevation: 1,
+                            elevation: 0.5,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                               side: const BorderSide(width: 1.5, color: Color(0xFFF5F5F5)),
@@ -407,12 +484,12 @@ class _LoginState extends State<Login> {
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 32),
 
                       // ===== LOGIN BUTTON =====
                       SizedBox(
                         width: fieldWidth,
-                        height: 52,
+                        height: 44,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.tealGray,
@@ -433,7 +510,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 32),
 
                       // ===== DON'T HAVE AN ACCOUNT? SIGN UP =====
                       Row(
@@ -443,6 +520,7 @@ class _LoginState extends State<Login> {
                             "Don't have an account? ",
                             style: TextStyle(
                               fontSize: 14,
+                              fontWeight: FontWeight.w400,
                               color: Color.fromARGB(255, 0, 0, 0),
                               fontFamily: "Inter",
                             ),
@@ -466,7 +544,7 @@ class _LoginState extends State<Login> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "Inter",
-                                color: Color(0xFF0BA3AC), // تيل
+                                color: AppColors.tealGray, // تيل
                                 //decoration: TextDecoration.underline,
                                 decorationColor: AppColors.tealGray,
                               ),
