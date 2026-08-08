@@ -30,9 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in: ^6.2.1
-  firebase_auth: ^5.5.3
-  firebase_core: ^3.13.0
+  google_sign_in: ^6.3.0
+  firebase_auth: ^5.7.0
+  firebase_core: ^3.15.2
   sign_in_with_apple: ^6.1.3
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -41,6 +41,10 @@ dependencies:
   flutter_ruler_picker: ^1.0.6
   smooth_page_indicator: ^1.2.0+3
   flutter_svg: ^2.2.1
+  dotted_border: ^2.1.0
+  dotted_line: ^3.1.0
+  icons_plus: ^5.0.0
+  cloud_firestore: ^5.6.12
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,6 +70,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - images/google.png
+     - images/Adidas.png
      - images/apple.png
      - images/cactus.png
      - images/change_password.png
@@ -76,6 +81,7 @@ flutter:
      - images/booking_empty.png
      - images/cart_empty.png
      - images/confirmation.png
+     - images/king.png
      - images/home.png
      - images/seif.jpg
      - images/Tshirt.png
@@ -83,6 +89,45 @@ flutter:
      - images/human.png
      - images/product.png
      - icons/qlementine-icons_password-16.svg
+     - icons/Bag.svg
+     - icons/fluent_person-28-regular.svg
+     - icons/hugeicons_home-05.svg
+     - icons/search.svg
+     - icons/solar_heart-outline.svg
+     - icons/Subtract.svg
+     - icons/delete.svg
+     - icons/policy.svg
+     - icons/email.svg
+     - icons/confirm_password.svg
+     - icons/exclamation (16) 1.svg
+     - icons/skip.svg
+     - icons/new_passowrd.svg
+     - icons/solar_user-outline.svg
+     - icons/success-IXzuHjaasy.svg
+     - icons/hugeicons_edit-02.svg
+     - icons/trash.svg
+     - icons/bell.svg
+     - icons/search.svg
+     - icons/menu.svg
+     - icons/streamline-ultimate_reward-stars-4-bold.svg
+     - icons/bxs_hot.svg
+     - icons/bxs_offer.svg
+     - icons/Nav bar.svg
+     - icons/solar_user-outline.svg
+     - icons/material-symbols-light_history-edu-outline-rounded.svg
+     - icons/fluent_wallet-credit-card-28-regular.svg
+     - icons/material-symbols-light_language.svg
+     - icons/terms.svg
+     - icons/solar_shop-outline.svg
+     - icons/fa6-solid_person.svg
+     - images/avatar.png
+     - icons/triangle.svg
+     - icons/edit.svg
+     - icons/phone.svg
+     - icons/search_Button.svg
+     - icons/Frame 30.svg
+     - icons/nav_search.svg
+     - icons/height_triangle.svg
 
   fonts:
     - family: kreon
@@ -94,6 +139,19 @@ flutter:
           weight: 600
         - asset: fonts/Kreon-Bold.ttf
           weight: 700   
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Poppins-Bold.ttf
+          weight: 700
+
  
 
   # An image asset can refer to one or more resolution-specific "variants", see
